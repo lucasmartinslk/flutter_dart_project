@@ -13,6 +13,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   AnimationController _controller;
+  TextEditingController controllerNumero1 = TextEditingController();
+  TextEditingController controllerNumero2 = TextEditingController();
+  GlobalKey<FormState> cForm = GlobalKey<FormState>();
+  String info = "";
 
   @override
   void initState() {
@@ -25,7 +29,7 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
     _controller.dispose();
     super.dispose();
   }
-
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -37,47 +41,103 @@ class _MyAppState extends State<MyApp> with SingleTickerProviderStateMixin {
   paginaPrincipal() {
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: Text("Calculadora"),
+        centerTitle: true,
       ),
-      body: Center(
+      body: criaNumeros(),
+    );
+  }
+
+  criaNumeros() {
+    return Form(
+      key: cForm,
+      child: Container(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            tipos(),
-            tipos2(),
+            Componentes.caixa("Numero 1","Digite o primeiro numero", controllerNumero1, validaNumero1, numero: true),
+            Componentes.caixa("Numero 2","Digite o segundo numero", controllerNumero2, validaNumero2, numero: true),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Componentes.botao("+", calcularValores),
+                Componentes.botao("-", calcularSub),
+                Componentes.botao("x", calcularMult),
+                Componentes.botao("/", calcularDiv),
+              ],
+            ),
+            Text(
+              info,
+              style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold, color: Colors.greenAccent),
+            ),
           ],
         ),
       ),
     );
   }
 
-  tipos() {
-    return Form(
-      child: Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Componentes.botao("+", null),
-              Componentes.botao("-", null),
-              Componentes.botao("/", null),
-              Componentes.botao("*", null),
-            ],
-          )
-      ),
-    );
+  Function validaNumero1 = ((value){
+    if(value.isEmpty){
+      return "Informe um valor";
+    }
+    return null;
+  });
+
+  Function validaNumero2 = ((value){
+    if(value.isEmpty){
+      return "Informe um valor";
+    }
+    return null;
+  });
+
+  calcularValores(){
+    setState(() {
+      if(!cForm.currentState.validate()){
+        return null;
+      }
+      double x = double.parse(controllerNumero1.text);
+      double y = double.parse(controllerNumero2.text);
+      var xy = x + y;
+      info = "A Soma é $xy";
+    });
   }
-  tipos2() {
-    return Form(
-      child: Container(
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Componentes.botao("DEL", null),
-              Componentes.botao("=", null),
-            ],
-          )
-      ),
-    );
+  calcularSub(){
+    setState(() {
+      if(!cForm.currentState.validate()){
+        return null;
+      }
+      double x = double.parse(controllerNumero1.text);
+      double y = double.parse(controllerNumero2.text);
+      var xy = x - y;
+      info = "A Subtração é $xy";
+    });
+  }
+  calcularMult(){
+    setState(() {
+      if(!cForm.currentState.validate()){
+        return null;
+      }
+      double x = double.parse(controllerNumero1.text);
+      double y = double.parse(controllerNumero2.text);
+      var xy = x * y;
+      info = "A Multiplicação é $xy";
+    });
+  }
+  calcularDiv(){
+    setState(() {
+      if(!cForm.currentState.validate()){
+        return null;
+      }
+      double x = double.parse(controllerNumero1.text);
+      double y = double.parse(controllerNumero2.text);
+      if(y!=0){
+        var xy = x / y;
+        info = "A Divisão é $xy";
+      }
+      else
+        info = "Cálculo Impossível";
+    });
   }
 }
+
 
